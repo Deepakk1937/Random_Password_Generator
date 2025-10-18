@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Weather App</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(135deg, #a0e9ff, #f9f9f9);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* Title box */
+        .main-title {
+            background-color: #0099ff;
+            color: white;
+            text-align: center;
+            padding: 15px 30px;
+            font-size: 26px;
+            font-weight: bold;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 25px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        /* Container for input & button */
+        .parent-container {
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .parent-container input {
+            padding: 10px;
+            width: 65%;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            margin-right: 5px;
+        }
+
+        .parent-container button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .parent-container button:hover {
+            background-color: #218838;
+        }
+
+        /* Result styling */
+        .result-container {
+            margin-top: 25px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .city-card {
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            background-color: #fff;
+            padding: 20px;
+            text-align: center;
+            font-size: 18px;
+            animation: fadeIn 0.4s ease-in;
+        }
+
+        .city-card span {
+            font-weight: bold;
+            color: #0077cc;
+        }
+
+        .city-card p {
+            margin: 10px 0;
+        }
+
+        /* Fade-in animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 480px) {
+            .main-title {
+                font-size: 22px;
+                padding: 12px 20px;
+            }
+
+            .parent-container input {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .parent-container button {
+                width: 100%;
+            }
+
+            .parent-container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-title">City Weather</div>
+
+    <form id="form" class="parent-container">
+        <input 
+            type="text"
+            placeholder="Enter city name"
+            id="city-name"/>
+        <button type="submit">Submit</button>
+    </form>
+
+    <div id="result" class="result-container"></div>
+
+    <script>
+        var form = document.getElementById("form");
+        var result = document.getElementById("result");
+        var cityName = document.getElementById("city-name");
+        var apikey = "71beb2928eb92f0b903d69237507e774";
+
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            var apiurl = `https://api.openweathermap.org/data/2.5/weather?q=${cityName.value}&appid=${apikey}&units=metric`;
+            fetch(apiurl)
+                .then((res) => res.json())
+                .then((res) => {
+                    if (res.cod == "404") {
+                        alert("City not found");
+                        return false;
+                    }
+                    var weatherData = {
+                        temp: res.main.temp,
+                        country: res.sys.country,
+                        name: res.name
+                    };
+                    displayResult(weatherData);
+                });
+        });
+
+        function displayResult(weatherData) {
+            result.innerHTML = `
+                <div class="city-card">
+                    <p><span>Name</span>: ${weatherData.name}</p>
+                    <p><span>Temp</span>: ${weatherData.temp} <sup>°</sup>C</p>
+                    <p><span>Country</span>: ${weatherData.country}</p>
+                </div>
+            `;
+        }
+    </script>
+
+</body>
+</html>
